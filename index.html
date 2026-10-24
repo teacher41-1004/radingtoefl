@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TOEFL ITP Practice – Reading Comprehension</title>
+<style>
+:root{--b9:#0b2e75;--b8:#0f3d99;--b7:#1649c4;--b2:#c7dafe;--b1:#e3edff;--b0:#f2f6ff;--y:#ffe93b;--yd:#e0b800;--bad:#b42318;--qfs:14px;--rfs:16px}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--b9);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#0f172a}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.app{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;display:grid;grid-template-columns:62.5% 37.5%;grid-template-rows:minmax(0,1fr);background:linear-gradient(135deg,var(--b9),var(--b7))}
+.cell{padding:clamp(6px,1.2vmin,14px);min-width:0;min-height:0;display:flex}
+.card{flex:1;min-width:0;min-height:0;border-radius:14px;box-shadow:0 6px 24px rgba(3,15,50,.35)}
+.reading{background:#fff;color:#000;overflow:auto;padding:.8em 1em;font:400 var(--rfs)/1.5 "Times New Roman",Times,"Liberation Serif",serif;border-top:5px solid var(--y)}
+.reading:focus-visible,.btn:focus-visible{outline:3px solid var(--b9);outline-offset:2px}
+.timer{display:flex;align-items:center;gap:.5em;color:var(--b9);font-weight:600}
+.t-time{font-variant-numeric:tabular-nums;font-size:1.25em;min-width:4.2em;color:var(--b9)}
+.btn.tbtn{min-height:0;padding:.3em 1em;font-size:.95em}
+.r-title{font-weight:400;font-size:1em;margin:0 0 .5em;text-decoration:underline}
+.para{margin:0 0 .6em}
+.line{display:block;white-space:nowrap;position:relative;padding-left:3.4em;font-weight:400}
+.para .line:first-child{text-indent:2em}
+.line::before{content:attr(data-num);position:absolute;left:0;width:2.8em;text-align:right;font-style:italic;color:var(--b8);text-indent:0}
+mark.hl{background:var(--y);color:#000;padding:0;font-weight:400;animation:hl .35s ease}
+@keyframes hl{from{background-color:rgba(255,233,59,0)}}
+.qcard{background:var(--b0);font-size:var(--qfs);overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;border-top:5px solid var(--y)}
+.qinner{flex:1 0 auto;display:flex;flex-direction:column;gap:.75em;padding:1em 1.1em}
+.q-badge{align-self:flex-start;background:var(--b8);color:#fff;border-radius:99px;padding:.25em .85em;font-size:.85em;font-weight:600}
+.q-text{margin:0;font-size:1.08em;line-height:1.35;font-weight:600;color:#071b4a}
+.q-text:focus{outline:0}
+.options{display:grid;gap:.5em;align-content:start}
+.opt{position:relative;display:flex;align-items:center;gap:.6em;padding:.6em .7em;background:#fff;border:2px solid var(--b2);border-radius:.7em;cursor:pointer;line-height:1.25;transition:background .15s,border-color .15s,transform .15s}
+.opt:hover{border-color:var(--b7)}
+.opt input{position:absolute;opacity:0;width:1px;height:1px}
+.opt:has(:focus-visible){outline:3px solid var(--b9);outline-offset:2px}
+.letter{flex:none;width:1.75em;height:1.75em;border-radius:50%;display:grid;place-items:center;background:var(--b1);color:var(--b8);font-weight:700;font-size:.9em;transition:.15s}
+.opt.is-selected{border-color:var(--b7);background:var(--b1);transform:translateX(2px)}
+.opt.is-selected .letter{background:var(--b7);color:#fff}
+.opt.is-correct{background:#d6e4ff;border-color:var(--b7)}
+.opt.is-correct::after{content:"\2713";margin-left:auto;color:var(--b7);font-weight:800}
+.opt.is-dim{opacity:.55;cursor:default}
+.feedback{margin:0;min-height:1.5em;font-weight:700;font-size:.95em}
+.feedback.ok{color:var(--b8)}.feedback.bad{color:var(--bad)}
+.feedback.pop{animation:pop .3s ease}
+@keyframes pop{from{opacity:0;transform:translateY(4px)}}
+.actions{margin-top:auto;display:grid;grid-template-columns:repeat(6,1fr);gap:.5em}
+.btn{font:inherit;font-weight:700;font-size:.95em;min-height:2.5em;padding:.4em .5em;border-radius:.7em;border:2px solid var(--b7);background:#fff;color:var(--b8);cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 3px 8px rgba(11,46,117,.25)}
+.btn:disabled{opacity:.42;cursor:not-allowed}
+.btn.primary{background:var(--b7);color:#fff}
+.btn.accent{background:var(--y);border-color:var(--yd);color:#071b4a}
+.btn[aria-pressed=true]{background:var(--y);border-color:var(--yd);color:#000}
+[data-action=check],[data-action=show]{grid-column:span 3}
+[data-action=prev],[data-action=next]{grid-column:span 3}
+[data-action=results]{grid-column:1/-1}
+.qin{animation:qin .28s ease}
+@keyframes qin{from{opacity:0;transform:translateX(10px)}}
+.results{position:fixed;inset:0;overflow:auto;background:linear-gradient(135deg,var(--b9),var(--b7));padding:clamp(8px,2vmin,24px);display:grid;place-items:center}
+.res{background:#fff;border-radius:16px;border-top:6px solid var(--y);width:min(920px,100%);padding:clamp(14px,2.5vmin,28px);animation:qin .3s ease}
+.res h2{margin:0 0 .3em;color:var(--b9);font-size:clamp(1.3rem,3vmin,1.8rem)}.res h2:focus{outline:0}
+.res-msg{margin:0 0 .8em;color:#1e293b}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6em;margin-bottom:.9em}
+.stat{background:var(--b0);border:2px solid var(--b2);border-radius:12px;padding:.5em .7em;text-align:center}
+.stat b{display:block;font-size:1.5rem;color:var(--b8)}.stat span{font-size:.85rem;color:#334155}
+.stat.big{background:var(--y);border-color:var(--yd)}.stat.big b{color:#000}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{padding:.4em .6em;border-bottom:1px solid var(--b2);text-align:left}
+th{background:var(--b8);color:#fff}
+.note{font-size:.85rem;background:#fff9d6;border-left:4px solid var(--yd);padding:.5em .7em;margin:.8em 0;color:#1e293b}
+.res-actions{display:flex;gap:.6em;flex-wrap:wrap}
+.res-actions .btn{padding:.5em 1.2em}
+@media (max-width:820px),(max-aspect-ratio:1/1){
+.app{grid-template-columns:100%;grid-template-rows:62.5% 37.5%}
+.cell{padding:5px}
+.reading{padding:.5em .7em;line-height:1.45}
+.line{display:inline;white-space:normal;padding:0}.line::before{content:none}
+.para{text-indent:1.6em;margin:0 0 .5em}.para .line:first-child{text-indent:0}
+.qinner{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto auto 1fr auto;gap:.4em .5em;padding:.6em .7em}
+.timer{grid-area:1/1/2/3}
+.q-badge{grid-area:2/1}.feedback{grid-area:2/2;text-align:right;align-self:center}
+.q-text{grid-area:3/1/4/3}.options{grid-area:4/1/5/3;grid-template-columns:1fr 1fr;gap:.35em}
+.actions{grid-area:5/1/6/3;gap:.35em}
+.opt{padding:.4em .5em;gap:.4em}
+.btn{min-height:2.3em}
+[data-action=prev],[data-action=next],[data-action=results]{grid-column:span 2}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<h1 class="sr">TOEFL ITP Practice – Reading Comprehension</h1>
+<div class="app" id="app">
+  <div class="cell"><section class="card reading" id="reading" role="region" aria-label="Reading passage" tabindex="0">
+    <h2 class="r-title">Questions 1–10</h2><div id="passage"></div></section></div>
+  <div class="cell"><section class="card qcard" id="qcard" aria-label="Question"><div class="qinner" id="qinner">
+    <div class="timer" id="timer"><span class="t-time" id="tTime" role="timer" aria-label="Elapsed time">00:00</span>
+      <button class="btn primary tbtn" id="tStart" type="button">Start</button>
+      <button class="btn tbtn" id="tPause" type="button" disabled>Pause</button></div>
+    <span class="q-badge" id="qBadge"></span>
+    <p class="q-text" id="qText" tabindex="-1"></p>
+    <div class="options" id="options" role="radiogroup" aria-labelledby="qText">
+      <label class="opt"><input type="radio" name="answer" value="A"><span class="letter">A</span><span class="ot"></span></label>
+      <label class="opt"><input type="radio" name="answer" value="B"><span class="letter">B</span><span class="ot"></span></label>
+      <label class="opt"><input type="radio" name="answer" value="C"><span class="letter">C</span><span class="ot"></span></label>
+      <label class="opt"><input type="radio" name="answer" value="D"><span class="letter">D</span><span class="ot"></span></label>
+    </div>
+    <p class="feedback" id="feedback" role="status" aria-live="polite" aria-atomic="true"></p>
+    <div class="actions" id="actions">
+      <button class="btn primary" data-action="check" type="button">Check Answer</button>
+      <button class="btn" data-action="show" type="button" aria-pressed="false">Show Answer</button>
+      <button class="btn" data-action="prev" type="button">Previous</button>
+      <button class="btn" data-action="next" type="button">Next</button>
+      <button class="btn accent" data-action="results" type="button">See Results</button>
+    </div></div></section></div>
+</div>
+
+<section class="results" id="results" hidden aria-labelledby="resTitle"><div class="res">
+  <h2 id="resTitle" tabindex="-1">Reading Comprehension Results</h2>
+  <p class="res-msg" id="resMsg"></p>
+  <div class="stats">
+    <div class="stat big"><b id="rScore"></b><span>Final score</span></div>
+    <div class="stat"><b id="rPct"></b><span>Percentage</span></div>
+    <div class="stat"><b id="rFirst"></b><span>Correct on the first try</span></div>
+    <div class="stat"><b id="rMore"></b><span>Needed more than one try</span></div>
+    <div class="stat"><b id="rTime"></b><span>Total time</span></div>
+  </div>
+  <div class="tw"><table><caption class="sr">Answer key and evidence</caption>
+    <thead><tr><th scope="col">No.</th><th scope="col">Correct answer</th><th scope="col">Score</th><th scope="col">Evidence in the passage</th></tr></thead>
+    <tbody id="rBody"></tbody></table></div>
+  <p class="note">* Question 9: “substantially” means “significantly” or “considerably.” None of the choices is a perfect match, so (A) is only a tentative answer and this question may not be valid.</p>
+  <div class="res-actions" id="resActions">
+    <button class="btn primary" data-action="review" type="button">Review Answers</button>
+    <button class="btn accent" data-action="again" type="button">Try Again</button>
+  </div>
+</div></section>
+
+<script>
+(() => {
+'use strict';
+const LET = ['A','B','C','D'];
+const LINES = [[
+ 'Precipitation, commonly referred to as rainfall, is a measure of the quantity of water in',
+ 'the form of either rain, hail, or snow which reaches the ground. The average annual precipitation',
+ 'over the whole of the United States is thirty-six inches. It should be understood,',
+ 'however, that a foot of snow is not equal to a foot of precipitation. A general formula for',
+ 'computing the precipitation of snowfall is that ten inches of snow is equal to one inch of precipitation.',
+ 'In New York State, for example, twenty inches of snow in one year would be',
+ 'recorded as only two inches of precipitation. Forty inches of rain would be recorded as forty',
+ 'inches of precipitation. The total annual precipitation would be recorded as forty-two inches.'],[
+ 'The amount of precipitation is a combined result of several factors, including location,',
+ 'altitude, proximity to the sea, and the direction of prevailing winds. Most of the precipitation',
+ 'in the United States is brought originally by prevailing winds from the Pacific Ocean, the',
+ 'Gulf of Mexico, the Atlantic Ocean, and the Great Lakes. Because these prevailing winds',
+ 'generally come from the West, the Pacific Coast receives more annual precipitation than the',
+ 'Atlantic Coast. Along the Pacific Coast itself, however, altitude causes some diversity in rainfall.',
+ 'The mountain ranges of the United States, especially the Rocky Mountain Range and the',
+ 'Appalachian Mountain Range, influence the amount of precipitation in their areas. East of',
+ 'the Rocky Mountains, the annual precipitation decreases substantially from that west of the',
+ 'Rocky Mountains. The precipitation north of the Appalachian Mountains is about 40 percent',
+ 'less than that south of the Appalachian Mountains.']];
+const LABELS = {4:'Line',5:'(5)',10:'(10)',15:'(15)'};
+const S1 = 'Precipitation, commonly referred to as rainfall, is a measure of the quantity of water in the form of either rain, hail, or snow which reaches the ground.';
+const S2 = 'The amount of precipitation is a combined result of several factors, including location, altitude, proximity to the sea, and the direction of prevailing winds.';
+const S3 = 'The mountain ranges of the United States, especially the Rocky Mountain Range and the Appalachian Mountain Range, influence the amount of precipitation in their areas.';
+const Q = [
+ {t:'What does this passage mainly discuss?',o:['Precipitation','Snowfall','New York State','A general formula'],a:'A',loc:'Lines 1–19 (whole passage)',ev:[[0,S1],[1,S2]]},
+ {t:'Which of the following is another word that is often used in place of precipitation?',o:['Humidity','Wetness','Rainfall','Rain-snow'],a:'C',loc:'Line 1',ev:[[0,'Precipitation, commonly referred to as rainfall']]},
+ {t:'The term precipitation includes',o:['only rainfall','rain, hail, and snow','rain, snow, and humidity','rain, hail, and humidity'],a:'B',loc:'Lines 1–2',ev:[[0,'in the form of either rain, hail, or snow']]},
+ {t:'What is the average annual rainfall in inches in the United States?',o:['Thirty-six inches','Thirty-eight inches','Forty inches','Forty-two inches'],a:'A',loc:'Lines 2–3',ev:[[0,'The average annual precipitation over the whole of the United States is thirty-six inches.']]},
+ {t:'If a state has 40 inches of snow in a year, by how much does this increase the annual precipitation?',o:['By two feet','By four inches','By four feet','By 40 inches'],a:'B',loc:'Lines 4–6',ev:[[0,'ten inches of snow is equal to one inch of precipitation']]},
+ {t:'The phrase “proximity to” in line 10 is closest in meaning to',o:['communication with','dependence on','nearness to','similarity to'],a:'C',loc:'Lines 9–10',ev:[[1,'including location, altitude, proximity to the sea, and the direction of prevailing winds']]},
+ {t:'Where is the annual precipitation highest?',o:['The Atlantic Coast','The Great Lakes','The Gulf of Mexico','The Pacific Coast'],a:'D',loc:'Lines 12–14',ev:[[1,'the Pacific Coast receives more annual precipitation than the Atlantic Coast']]},
+ {t:'Which of the following was NOT mentioned as a factor in determining the amount of precipitation that an area will receive?',o:['Mountains','Latitude','The sea','Wind'],a:'B',loc:'Lines 9–10 and 15–19',ev:[[1,S2],[1,S3]]},
+ {t:'The word “substantially” in line 17 could best be replaced by',o:['fundamentally','slightly','completely','apparently'],a:'A',tent:true,loc:'Line 17',ev:[[1,'the annual precipitation decreases substantially']]},
+ {t:'The word “that” in line 19 refers to',o:['decreases','precipitation','areas','mountain ranges'],a:'B',loc:'Lines 18–19',ev:[[1,'The precipitation north of the Appalachian Mountains is about 40 percent less than that south of the Appalachian Mountains.']]}
+];
+const N = Q.length;
+const $ = id => document.getElementById(id);
+const el = {app:$('app'),reading:$('reading'),passage:$('passage'),qcard:$('qcard'),qinner:$('qinner'),badge:$('qBadge'),qt:$('qText'),fb:$('feedback'),results:$('results')};
+const btn = {}; document.querySelectorAll('#actions [data-action]').forEach(b => btn[b.dataset.action] = b);
+const opts = [...document.querySelectorAll('.opt')].map(l => ({l, i:l.querySelector('input'), t:l.querySelector('.ot')}));
+const mq = matchMedia('(max-width:820px),(max-aspect-ratio:1/1)');
+const reduce = matchMedia('(prefers-reduced-motion:reduce)');
+const fresh = () => ({sel:null, tries:0, ok:false, score:0, fb:null, show:false});
+const st = {cur:0, a:Q.map(fresh)};
+const allOk = () => st.a.every(a => a.ok);
+const restart = (node, cls) => { node.classList.remove(cls); if (!reduce.matches) { void node.offsetWidth; node.classList.add(cls); } };
+
+/* timer: counts up for the whole set; stops when all questions are correct */
+const tm = {ms:0, run:false, t0:0, id:0, done:false};
+const pad = n => String(n).padStart(2, '0');
+const fmt = ms => { const s = Math.floor(ms / 1000), h = Math.floor(s / 3600); return (h ? h + ':' : '') + pad(Math.floor(s % 3600 / 60)) + ':' + pad(s % 60); };
+const tNow = () => tm.ms + (tm.run ? performance.now() - tm.t0 : 0);
+function tDraw(){ $('tTime').textContent = fmt(tNow()); $('tStart').disabled = tm.run || tm.done; $('tPause').disabled = !tm.run; }
+function tStart(){ if (tm.run || tm.done) return; tm.run = true; tm.t0 = performance.now(); tm.id = setInterval(tDraw, 250); tDraw(); }
+function tPause(){ if (!tm.run) return; tm.ms = tNow(); tm.run = false; clearInterval(tm.id); tDraw(); }
+function tStop(){ tPause(); tm.done = true; tDraw(); }
+function tReset(){ tPause(); tm.ms = 0; tm.done = false; tDraw(); }
+
+/* passage */
+function buildPassage(){
+  let n = 0;
+  LINES.forEach(lines => {
+    const p = document.createElement('p'); p.className = 'para';
+    lines.forEach((txt, k) => {
+      n++;
+      const s = document.createElement('span'); s.className = 'line';
+      s.dataset.num = LABELS[n] || ''; s.textContent = txt; p.appendChild(s);
+      if (k < lines.length - 1) p.appendChild(document.createTextNode(' '));
+    });
+    el.passage.appendChild(p);
+  });
+}
+
+/* highlight (works on the original text nodes) */
+function clearHL(){
+  el.passage.querySelectorAll('mark.hl').forEach(m => { const par = m.parentNode; while (m.firstChild) par.insertBefore(m.firstChild, m); par.removeChild(m); });
+  el.passage.querySelectorAll('.para').forEach(p => p.normalize());
+}
+function markText(pi, phrase){
+  const p = el.passage.querySelectorAll('.para')[pi];
+  const w = document.createTreeWalker(p, NodeFilter.SHOW_TEXT), nodes = []; let x;
+  while ((x = w.nextNode())) nodes.push(x);
+  const start = nodes.map(n => n.nodeValue).join('').indexOf(phrase);
+  if (start < 0) { console.warn('Evidence not found:', phrase); return; }
+  const end = start + phrase.length, jobs = []; let pos = 0;
+  nodes.forEach(n => { const s = pos, e = pos + n.nodeValue.length; pos = e; const a = Math.max(start, s), b = Math.min(end, e); if (a < b) jobs.push([n, a - s, b - s]); });
+  jobs.forEach(([n, a, b]) => { const r = document.createRange(); r.setStart(n, a); r.setEnd(n, b); const m = document.createElement('mark'); m.className = 'hl'; r.surroundContents(m); });
+}
+function scrollToHL(){
+  const m = el.passage.querySelector('mark.hl'); if (!m) return;
+  const r = m.getBoundingClientRect(), b = el.reading.getBoundingClientRect();
+  if (r.top < b.top + 8 || r.bottom > b.bottom - 8)
+    el.reading.scrollTo({top: Math.max(0, el.reading.scrollTop + r.top - b.top - el.reading.clientHeight / 3), behavior: reduce.matches ? 'auto' : 'smooth'});
+}
+function syncHL(scroll){
+  clearHL();
+  const a = st.a[st.cur];
+  if (a.show && a.ok) { Q[st.cur].ev.forEach(([pi, t]) => markText(pi, t)); if (scroll) scrollToHL(); }
+}
+
+/* question view */
+function setFB(type, force){
+  const f = el.fb, txt = type === 'correct' ? 'Correct! Well done!' : type === 'wrong' ? 'Try again.' : '';
+  f.className = 'feedback' + (type ? (type === 'correct' ? ' ok' : ' bad') : '');
+  if (f.textContent === txt && !force) return;
+  if (force) { f.textContent = ''; setTimeout(() => { if (st.a[st.cur].fb === type) { f.textContent = txt; restart(f, 'pop'); } }, 40); }
+  else { f.textContent = txt; if (type) restart(f, 'pop'); }
+}
+function renderQuestion(animate){
+  const q = Q[st.cur], a = st.a[st.cur];
+  el.badge.textContent = `Question ${st.cur + 1} of ${N}`;
+  el.qt.textContent = q.t;
+  opts.forEach((o, k) => {
+    const L = LET[k];
+    o.t.textContent = q.o[k];
+    o.i.checked = a.sel === L; o.i.disabled = a.ok;
+    o.l.classList.toggle('is-selected', a.sel === L);
+    o.l.classList.toggle('is-correct', a.ok && q.a === L);
+    o.l.classList.toggle('is-dim', a.ok && q.a !== L);
+  });
+  setFB(a.fb);
+  btn.check.disabled = !a.sel || a.ok;
+  btn.show.disabled = !a.ok;
+  btn.show.setAttribute('aria-pressed', String(a.show && a.ok));
+  btn.prev.disabled = st.cur === 0;
+  btn.next.disabled = st.cur === N - 1;
+  btn.results.disabled = !allOk();
+  if (animate) restart(el.qinner, 'qin');
+}
+
+/* actions */
+function onChoose(e){
+  const a = st.a[st.cur];
+  if (a.ok || !e.target.matches('input')) return;
+  a.sel = e.target.value; a.fb = null;
+  renderQuestion(false);
+}
+function checkAnswer(){
+  const a = st.a[st.cur];
+  if (a.ok || !a.sel) return;
+  a.tries++;
+  if (a.sel === Q[st.cur].a) { a.ok = true; a.score = a.tries === 1 ? 1 : 0; a.fb = 'correct'; if (allOk()) tStop(); renderQuestion(false); btn.show.focus({preventScroll:true}); }
+  else { a.fb = 'wrong'; renderQuestion(false); setFB('wrong', true); }
+}
+function toggleShow(){
+  const a = st.a[st.cur]; if (!a.ok) return;
+  a.show = !a.show; renderQuestion(false); syncHL(true);
+}
+function goTo(i){
+  if (i < 0 || i >= N) return;
+  st.cur = i; renderQuestion(true); syncHL(true);
+}
+function onAction(e){
+  const b = e.target.closest('button[data-action]'); if (!b || b.disabled) return;
+  ({check:checkAnswer, show:toggleShow, prev:() => goTo(st.cur - 1), next:() => goTo(st.cur + 1), results:showResults})[b.dataset.action]();
+}
+
+/* screens */
+function showQuiz(){
+  el.results.hidden = true; el.app.hidden = false;
+  renderQuestion(true); fit(); syncHL(true);
+  el.qt.focus({preventScroll:true});
+}
+function showResults(){
+  if (!allOk()) return;
+  const total = st.a.reduce((s, a) => s + a.score, 0), first = st.a.filter(a => a.tries === 1).length, more = st.a.filter(a => a.tries > 1).length;
+  $('rScore').textContent = `${total} / ${N}`;
+  $('rPct').textContent = Math.round(total / N * 100) + '%';
+  $('rTime').textContent = fmt(tNow()); $('rFirst').textContent = first; $('rMore').textContent = more;
+  $('resMsg').textContent = total >= 9 ? 'Excellent work! You understand the passage very well.'
+    : total >= 7 ? 'Good job! Review the evidence in the passage and try for a perfect score.'
+    : total >= 4 ? 'Nice effort. Read the evidence lines again and try once more.'
+    : 'Keep practicing. Review the passage and the evidence, then try again.';
+  const body = $('rBody'); body.textContent = '';
+  Q.forEach((q, i) => {
+    const tr = document.createElement('tr');
+    [i + 1, `${q.a}${q.tent ? '*' : ''} – ${q.o[LET.indexOf(q.a)]}`, `${st.a[i].score} / 1`, q.loc].forEach(v => { const td = document.createElement('td'); td.textContent = v; tr.appendChild(td); });
+    body.appendChild(tr);
+  });
+  el.app.hidden = true; el.results.hidden = false; el.results.scrollTop = 0;
+  $('resTitle').focus({preventScroll:true});
+}
+function onResultsAction(e){
+  const b = e.target.closest('button[data-action]'); if (!b) return;
+  if (b.dataset.action === 'review') { st.a.forEach(a => { if (a.ok) a.show = true; }); st.cur = 0; showQuiz(); }
+  else { st.a = Q.map(fresh); st.cur = 0; tReset(); clearHL(); el.reading.scrollTop = 0; showQuiz(); }
+}
+
+/* layout fitting: question font first (worst case over all questions), then the biggest reading font that fits */
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+let raf = 0;
+function fit(){
+  if (el.app.hidden) return;
+  const root = document.documentElement, W = innerWidth, stacked = mq.matches, MIN = 10.5;
+  let fs = stacked ? clamp(W * 0.037, 12, 17) : clamp(W * 0.0075 + 4, 12, 18);
+  const setQ = v => root.style.setProperty('--qfs', v + 'px');
+  const keep = st.cur; setQ(fs);
+  for (let i = 0; i < N; i++) {
+    st.cur = i; renderQuestion(false);
+    while (fs > MIN && el.qcard.scrollHeight > el.qcard.clientHeight + 1) { fs -= 0.5; setQ(fs); }
+  }
+  st.cur = keep; renderQuestion(false);
+  const box = el.reading, setR = v => root.style.setProperty('--rfs', v + 'px');
+  const fits = () => box.scrollHeight <= box.clientHeight + 1 && (stacked || box.scrollWidth <= box.clientWidth + 1);
+  let lo = fs * 1.1;
+  setR(lo);
+  while (!fits() && fs > MIN) { fs -= 0.5; setQ(fs); lo = fs * 1.1; setR(lo); }
+  if (fits()) {
+    let hi = stacked ? 24 : 30;
+    for (let k = 0; k < 9; k++) { const mid = (lo + hi) / 2; setR(mid); if (fits()) lo = mid; else hi = mid; }
+    setR(lo);
+  }
+  if (el.passage.querySelector('mark.hl')) scrollToHL();
+}
+const schedule = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(fit); };
+
+/* init + quick self-check */
+function selfCheck(){
+  const full = LINES.map(l => l.join(' '));
+  Q.forEach((q, i) => q.ev.forEach(([pi, t]) => { if (!full[pi].includes(t)) console.warn('Q' + (i + 1) + ' evidence missing:', t); }));
+  const flat = LINES.flat();
+  if (flat.length !== 19 || !flat[9].includes('proximity') || !flat[16].includes('substantially') || !flat[18].includes('that')) console.warn('Line numbering mismatch');
+}
+buildPassage(); selfCheck();
+$('tStart').addEventListener('click', tStart);
+$('tPause').addEventListener('click', tPause);
+$('options').addEventListener('change', onChoose);
+$('actions').addEventListener('click', onAction);
+$('resActions').addEventListener('click', onResultsAction);
+addEventListener('resize', schedule);
+addEventListener('orientationchange', schedule);
+mq.addEventListener('change', schedule);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+renderQuestion(false); fit();
+})();
+</script>
+</body>
+</html>
